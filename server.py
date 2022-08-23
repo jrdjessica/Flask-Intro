@@ -1,6 +1,7 @@
 """Greeting Flask app."""
 
 from random import choice
+import re
 
 from flask import Flask, request
 
@@ -18,7 +19,16 @@ AWESOMENESS = [
 def start_here():
     """Home page."""
 
-    return "<!doctype html><html>Hi! This is the home page.</html>"
+    return """<!doctype html>
+      <html>Hi! This is the home page.
+      <head>
+        <title></title>
+      </head>
+      <body>
+        <a href="/hello">Link</a>
+      </body>
+    </html>
+    """
 
 
 @app.route('/hello')
@@ -35,6 +45,10 @@ def say_hello():
         <h1>Hi There!</h1>
         <form action="/greet">
           What's your name? <input type="text" name="person">
+          <input type="radio" name="compliments" value="sweet" id="sweet">
+          <label for="sweet">sweet</label>
+          <input type="radio" name="compliments" value="funny" id="funny">
+          <label for="funny">funny</label>
           <input type="submit" value="Submit">
         </form>
       </body>
@@ -42,13 +56,42 @@ def say_hello():
     """
 
 
+@app.route('/diss')
+def say_insult():
+
+    return """
+      <!doctype html>
+    <html>
+      <head>
+        <title>You are the worst!</title>
+      </head>
+      <body>
+        <h1>Hi There!</h1>
+        <form action="/greet">
+          What's your name? <input type="text" name="person">
+          <input type="radio" name="insults" value="lazy" id="lazy">
+          <label for="lazy">lazy</label>
+          <input type="radio" name="insults" value="boring" id="boring">
+          <label for="boring">boring</label>
+          <input type="submit" value="Submit">
+        </form>
+      </body>
+    </html>
+  
+  """
+
+
 @app.route('/greet')
 def greet_person():
     """Get user by name."""
-
+    # person is the dict key, the val is the name
+    # they typed on form
+    # assign value to var player
     player = request.args.get("person")
 
-    compliment = choice(AWESOMENESS)
+    compliment = request.args.get("compliments")
+
+    insult = request.args.get("insults")
 
     return f"""
     <!doctype html>
@@ -57,7 +100,7 @@ def greet_person():
         <title>A Compliment</title>
       </head>
       <body>
-        Hi, {player}! I think you're {compliment}!
+        Hi, {player}! I think you're {insult}!
       </body>
     </html>
     """
